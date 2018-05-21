@@ -30,14 +30,18 @@ function createDirectory(){
 	
 	$filename 	= @$_GET['File'];
 	$automation = base64_decode(@$_GET['Link']);
+	
+	
   //check if directory exist 
 	if (!is_dir('scripts')){  
 		mkdir('scripts', 0777, TRUE);
 	}
 	$file_to_run = 'scripts/'.$filename;
 	if (file_exists($file_to_run)) {
-	  // unlink('scripts/'.$filename);
+	   unlink('scripts/'.$filename);
 	}
+	
+	
 	if(!empty($filename)){
 		sleep(5);
 		ini_set('display_errors', 1);
@@ -52,19 +56,16 @@ function createDirectory(){
 		file_put_contents('scripts/'.$filename, $file123);	
 		if (file_exists($file_to_run)) {
 			$cmd = shell_exec("python ".$base_url.$filename);
-			echo $cmd;
-			//echo "file successfully moved";
 		}
 	}
 }
 $data = createDirectory();
 ?>
-
-
 <script type="text/javascript">
 SendNotification();
 function SendNotification(){
-	window.opener.postMessage("loadMyTestCases","*");
+	window.opener.postMessage("<?php echo @$_GET['File'];?>","*");
 	//window.close();
 }
+</script>
 </script>
