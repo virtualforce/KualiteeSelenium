@@ -68,4 +68,3 @@ function SendNotification(){
 	//window.close();
 }
 </script>
-</script>
