@@ -26,24 +26,15 @@ function createDirectory(){
 #webhook.php
 	//$filepath = 'http://www.kualiteestaging.com//files/htester/automation/testpython_2018-02-19_1519023129.py';
 	//$filename = 'testpython_2018-02-19_1519023129.py';
-	
-	
 	$filename 	= @$_GET['File'];
 	$automation = base64_decode(@$_GET['Link']);
-	
-	
-  //check if directory exist 
-	if (!is_dir('scripts')){  
-		mkdir('scripts', 0777, TRUE);
-	}
-	$file_to_run = 'scripts/'.$filename;
+	if(!empty($filename)){
+		$file_to_run = 'scripts/'.$filename;
 	if (file_exists($file_to_run)) {
 	   unlink('scripts/'.$filename);
 	}
-	
-	
 	if(!empty($filename)){
-		sleep(5);
+	//sleep(5);
 		ini_set('display_errors', 1);
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $automation);
@@ -54,11 +45,18 @@ function createDirectory(){
 		$file123 = curl_exec($ch);
 		curl_close($ch);
 		file_put_contents('scripts/'.$filename, $file123);	
-		if (file_exists($file_to_run)) {
-			$cmd = shell_exec("python ".$base_url.$filename);
+		/*Execute scripts*/
+			if(@$_GET['Lang']=='c_sharp'){
+				$outFileName = $filename; //"scriptedOutput"; //generate the file name dynamically to avoid collisions
+				$output = exec("cd ./Scripts && csc /r:WebDriver.dll;WebDriver.Support.dll;Newtonsoft.Json.dll /out:".$outFileName.".exe ".$outFileName." && " . $outFileName .".exe && del " . $outFileName . ".exe");
+			}elseif(@$_GET['Lang']=='python'){
+				if (file_exists($file_to_run)) {
+					$cmd = shell_exec("python ".$base_url.$filename);
+				}
+			}
 		}
 	}
-}
+}	
 $data = createDirectory();
 ?>
 <script type="text/javascript">
