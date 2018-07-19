@@ -1,4 +1,6 @@
 <?php
+ini_set('max_execution_time', 3000);
+
 /**
  * Kualitee Selenium Plugin
  *
@@ -26,14 +28,17 @@ function createDirectory(){
 #webhook.php
 	//$filepath = 'http://www.kualiteestaging.com//files/htester/automation/testpython_2018-02-19_1519023129.py';
 	//$filename = 'testpython_2018-02-19_1519023129.py';
+	
 	$filename 	= @$_GET['File'];
 	$automation = base64_decode(@$_GET['Link']);
 	if(!empty($filename)){
-		$file_to_run = 'scripts/'.$filename;
+
+	$file_to_run = 'scripts/'.$filename;
 	if (file_exists($file_to_run)) {
-	   unlink('scripts/'.$filename);
+	  // unlink('scripts/'.$filename);
 	}
 	if(!empty($filename)){
+	
 	//sleep(5);
 		ini_set('display_errors', 1);
 		$ch = curl_init();
