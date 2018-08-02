@@ -1,6 +1,4 @@
 <?php
-ini_set('max_execution_time', 3000);
-
 /**
  * Kualitee Selenium Plugin
  *
@@ -23,7 +21,11 @@ ini_set('max_execution_time', 3000);
  * @return   array
  *
  */
+ global $executed_output;
+ global $count_output;
 function createDirectory(){
+	global $executed_output;
+	global $count_output;
 	$base_url =  $_SERVER['DOCUMENT_ROOT']."/KualiteeSelenium/scripts/";
 #webhook.php
 	//$filepath = 'http://www.kualiteestaging.com//files/htester/automation/testpython_2018-02-19_1519023129.py';
@@ -53,10 +55,17 @@ function createDirectory(){
 		/*Execute scripts*/
 			if(@$_GET['Lang']=='c_sharp'){
 				$outFileName = $filename; //"scriptedOutput"; //generate the file name dynamically to avoid collisions
-				$output = exec("cd ./Scripts && csc /r:WebDriver.dll;WebDriver.Support.dll;Newtonsoft.Json.dll /out:".$outFileName.".exe ".$outFileName." && " . $outFileName .".exe && del " . $outFileName . ".exe");
+				//$output = exec("cd ./Scripts && csc /r:WebDriver.dll;WebDriver.Support.dll;Newtonsoft.Json.dll /out:".$outFileName.".exe ".$outFileName." && " . $outFileName .".exe && del " . $outFileName . ".exe");
+					$output1 = exec("cd ./Scripts && csc /r:WebDriver.dll;WebDriver.Support.dll;Newtonsoft.Json.dll /out:".$outFileName.".exe ".$outFileName." && " . $outFileName .".exe && del " . $outFileName . ".exe  2>&1", $output, $return_var);
+					//print_r($output);exit;
+					$executed_output = json_encode($output);
+					 $count_output = count($output);					 
 			}elseif(@$_GET['Lang']=='python'){
 				if (file_exists($file_to_run)) {
-					$cmd = shell_exec("python ".$base_url.$filename);
+					//$cmd = shell_exec("python ".$base_url.$filename);
+                     $cmd = exec("python ".$base_url.$filename." 2>&1", $output, $return_var);
+                	 $executed_output = json_encode($output);
+					 $count_output = count($output);					 
 				}
 			}
 		}
@@ -65,9 +74,14 @@ function createDirectory(){
 $data = createDirectory();
 ?>
 <script type="text/javascript">
-SendNotification();
-function SendNotification(){
-	window.opener.postMessage("<?php echo @$_GET['File'];?>","*");
-	//window.close();
-}
+var pass_data = {
+ 'fileName':'<?php echo @$_GET['File'];?>',
+ 'execOutput':'<?php echo @$executed_output;?>',
+ 'countOutput':'<?php echo @$count_output;?>', 
+};
+window.opener.postMessage(JSON.stringify(pass_data), "*");
 </script>
+
+
+
+
