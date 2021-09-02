@@ -1,4 +1,5 @@
 <?php
+//echo "Automation";exit;
 /**
  * Kualitee Selenium Plugin
  *
@@ -26,13 +27,14 @@
 function createDirectory(){
 	global $executed_output;
 	global $count_output;
-	$base_url =  $_SERVER['DOCUMENT_ROOT']."/KualiteeSelenium/scripts/";
+	$base_url =  $_SERVER['DOCUMENT_ROOT']."/KualiteeSelenium-master/scripts/";
 #webhook.php
 	//$filepath = 'http://www.kualiteestaging.com//files/htester/automation/testpython_2018-02-19_1519023129.py';
 	//$filename = 'testpython_2018-02-19_1519023129.py';
 	
 	$filename 	= @$_GET['File'];
 	$automation = base64_decode(@$_GET['Link']);
+	//echo $automation;exit;
 	if(!empty($filename)){
 
 	$file_to_run = 'scripts/'.$filename;
@@ -52,6 +54,7 @@ function createDirectory(){
 		$file123 = curl_exec($ch);
 		curl_close($ch);
 		file_put_contents('scripts/'.$filename, $file123);	
+		//echo $base_url.$filename;exit;
 		/*Execute scripts*/
 			if(@$_GET['Lang']=='c_sharp'){
 				$outFileName = $filename; //"scriptedOutput"; //generate the file name dynamically to avoid collisions
@@ -63,9 +66,12 @@ function createDirectory(){
 			}elseif(@$_GET['Lang']=='python'){
 				if (file_exists($file_to_run)) {
 					//$cmd = shell_exec("python ".$base_url.$filename);
-                     $cmd = exec("python ".$base_url.$filename." 2>&1", $output, $return_var);
-                	 $executed_output = json_encode($output);
-					 $count_output = count($output);					 
+                    $cmd = exec("python ".$base_url.$filename." 2>&1", $output, $return_var);
+                	// $cmd = exec("python C:\\xampp\\htdocs\\KualiteeSelenium\\scripts\\headless_20190306_1551878308.py 2>&1", $output, $return_var);
+					 
+					 $executed_output = json_encode($output);
+					 $count_output = count($output);
+//echo $executed_output."count".	$count_output;exit;				 
 				}
 			}
 		}
